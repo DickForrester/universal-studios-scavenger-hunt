@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Universal Studios Scavenger Hunt</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0e10;
+    --surface: #1a1a1e;
+    --surface2: #222228;
+    --border: #2e2e38;
+    --accent: #f5c842;
+    --accent2: #e8553e;
+    --text: #f0ede8;
+    --muted: #7a7a8a;
+    --correct: #4caf7d;
+    --wrong: #e8553e;
+    --hp: #740001;
+    --simpsons: #ffd90f;
+    --sf: #1a5276;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* HEADER */
+  header {
+    padding: 2.5rem 2rem 2rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(245,200,66,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    color: var(--accent);
+  }
+  header p {
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 0.5rem;
+  }
+
+  /* SCOREBOARD */
+  #scoreboard {
+    display: flex;
+    justify-content: center;
+    gap: 1.1rem;
+    padding: 1rem 0.5rem;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .score-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+  }
+  .score-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .score-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+  .score-num { font-size: 1.5rem; }
+  #sc-timer { color: var(--accent); }
+  #sc-timer.stopped { color: var(--correct); }
+
+
+  /* SPLASH SCREEN */
+  #splash {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+  }
+  #splash.hidden { display: none; }
+  .splash-emoji { font-size: 4rem; margin-bottom: 1.2rem; line-height: 1; }
+  .splash-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 8vw, 3rem);
+    font-weight: 900;
+    color: var(--accent);
+    line-height: 1.1;
+    margin-bottom: 0.6rem;
+  }
+  .splash-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 2.5rem;
+  }
+  .splash-rules {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 2.5rem;
+    text-align: left;
+    max-width: 340px;
+    width: 100%;
+  }
+  .splash-rules p {
+    font-size: 0.88rem;
+    color: var(--text);
+    margin-bottom: 0.6rem;
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+  }
+  .splash-rules p:last-child { margin-bottom: 0; }
+  .splash-rules span { flex-shrink: 0; }
+  #go-btn {
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    border-radius: 10px;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    padding: 1rem 3rem;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition: transform 0.1s, opacity 0.1s;
+    box-shadow: 0 4px 24px rgba(245,200,66,0.25);
+  }
+  #go-btn:active { transform: scale(0.97); opacity: 0.9; }
+
+  /* BOTTOM NAV */
+  #tabs {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    background: #131316;
+    border-top: 1px solid var(--border);
+    z-index: 100;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .tab-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.15rem;
+    padding: 0.55rem 0.1rem;
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    transition: color 0.2s;
+    position: relative;
+    min-width: 0;
+  }
+  .tab-btn.active { color: var(--accent); }
+  .tab-btn.active::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 15%; right: 15%;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 0 0 3px 3px;
+  }
+  .tab-icon { font-size: 1.25rem; line-height: 1; }
+  .tab-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.54rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    padding: 0 0.15rem;
+  }
+  .tab-progress {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.52rem;
+    opacity: 0.65;
+    line-height: 1;
+  }
+  #sections-container { padding-bottom: 5.5rem; }
+
+  /* SECTIONS */
+  .section {
+    display: none;
+    padding: 1.5rem 1.5rem 3rem;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  .section.active { display: block; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .section-subtitle {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 0.1rem;
+  }
+
+  /* SUBSECTION LABEL */
+  .subsection-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0.8rem 0 0.5rem;
+    border-top: 1px solid var(--border);
+    margin-top: 1.5rem;
+  }
+  .subsection-label:first-of-type { border-top: none; margin-top: 0; }
+
+  /* QUESTION CARD */
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.2rem 1.4rem;
+    margin-bottom: 0.75rem;
+    transition: border-color 0.2s;
+    position: relative;
+  }
+  .question-card.answered-correct { border-color: var(--correct); }
+  .question-card.answered-wrong { border-color: var(--wrong); }
+  .question-card.answered-correct::before {
+    content: '✓';
+    position: absolute;
+    top: 0.8rem; right: 1rem;
+    color: var(--correct);
+    font-size: 1rem;
+    font-weight: 700;
+  }
+  .question-card.answered-wrong::before {
+    content: '✗';
+    position: absolute;
+    top: 0.8rem; right: 1rem;
+    color: var(--wrong);
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .question-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.4rem;
+  }
+  .question-text {
+    font-size: 0.95rem;
+    color: var(--text);
+    margin-bottom: 0.9rem;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  /* OPTIONS */
+  .options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+  @media (max-width: 500px) { .options { grid-template-columns: 1fr; } }
+
+  .opt-btn {
+    padding: 0.55rem 0.9rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .opt-letter {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    min-width: 14px;
+  }
+  .opt-btn:hover:not(:disabled) {
+    background: var(--border);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .opt-btn:disabled { cursor: default; }
+  .opt-btn.correct {
+    background: rgba(76,175,125,0.15);
+    border-color: var(--correct);
+    color: var(--correct);
+  }
+  .opt-btn.wrong {
+    background: rgba(232,85,62,0.12);
+    border-color: var(--wrong);
+    color: var(--wrong);
+  }
+
+  /* OPEN ANSWER (Q10) */
+  .open-answer-wrap {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .open-answer-input {
+    flex: 1;
+    min-width: 150px;
+    padding: 0.55rem 0.9rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .open-answer-input:focus { border-color: var(--accent); }
+  .open-answer-input:disabled { opacity: 0.6; cursor: default; }
+  .open-submit-btn {
+    padding: 0.55rem 1.2rem;
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    border-radius: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-weight: 500;
+    transition: opacity 0.15s;
+  }
+  .open-submit-btn:hover { opacity: 0.85; }
+  .open-submit-btn:disabled { opacity: 0.4; cursor: default; }
+
+  .feedback-msg {
+    margin-top: 0.6rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+  }
+  .feedback-msg.correct { color: var(--correct); }
+  .feedback-msg.wrong { color: var(--wrong); }
+
+  /* RESET */
+  #reset-btn {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 0.3rem 0.5rem;
+    border-radius: 4px;
+    transition: color 0.2s;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  #reset-btn:hover { color: var(--accent2); }
+  #scoreboard-wrap {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  #scoreboard-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.4rem 1rem 0;
+  }
+  #scoreboard-top span {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* FINISH BANNER */
+  #finish-banner {
+    display: none;
+    text-align: center;
+    padding: 2.5rem 2rem;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin-top: 2rem;
+  }
+  #finish-banner h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+  #finish-banner p {
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+  }
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <div class="splash-emoji">🗺️</div>
+  <div class="splash-title">Universal Studios<br>Scavenger Hunt</div>
+  <div class="splash-sub">Find the clues &mdash; answer the questions</div>
+  <div class="splash-rules">
+    <p><span>🗺️</span> Explore each area and find the answers hidden around you.</p>
+    <p><span>⭐</span> Each question is worth <strong>3 points</strong> — max score is 192.</p>
+    <p><span>⚠️</span> Each wrong guess costs <strong>2 points</strong> — think before you tap!</p>
+    <p><span>⏱️</span> Your timer starts the moment you tap Go. Good luck!</p>
+  </div>
+  <button id="go-btn">Let's Go!</button>
+</div>
+
+<header>
+  <h1>Universal Studios<br>Scavenger Hunt</h1>
+  <p>Find the clues &mdash; answer the questions</p>
+</header>
+
+<div id="scoreboard-wrap">
+<div id="scoreboard-top"><span>Universal Studios Scavenger Hunt</span><button id="reset-btn">↺ Reset</button></div>
+<div id="scoreboard">
+  <div class="score-item">
+    <span class="score-num" id="sc-points">0</span>
+    <span class="score-label">Points</span>
+  </div>
+  <div class="score-item">
+    <span class="score-num" id="sc-max">/ 192</span>
+    <span class="score-label">Max</span>
+  </div>
+  <div class="score-item">
+    <span class="score-num" id="sc-correct">0</span>
+    <span class="score-label">Correct</span>
+  </div>
+  <div class="score-item">
+    <span class="score-num" id="sc-remaining">64</span>
+    <span class="score-label">Left</span>
+  </div>
+  <div class="score-item">
+    <span class="score-num" id="sc-timer">0:00</span>
+    <span class="score-label">Time</span>
+  </div>
+</div>
+</div>
+
+<div id="tabs"></div>
+<div id="sections-container"></div>
+
+
+<div id="finish-banner">
+  <h2>Hunt Complete! 🎉</h2>
+  <p id="finish-score"></p>
+</div>
+
+<script>
+const HUNT_DATA = [
+  {
+    id: "hp",
+    label: "H. Potter", fullLabel: "Harry Potter",
+    icon: "⚡",
+    color: "#740001",
+    subsections: [
+      {
+        name: "Diagon Alley",
+        questions: [
+          { num: 1, text: "As you approach the Knight Bus, stop for a moment to chat with the shrunken head next to the driver's seat. What is the name of this shrunken head?", options: ["Dre Head","Dr. Dre","Dread Head","Jack"], answer: 0 },
+          { num: 2, text: "What color beads will you find in the hair of the shrunken head on the Knight Bus?", options: ["Red and Blue","Blue and Green","Green and Yellow","Yellow and Red"], answer: 0 },
+        ]
+      },
+      {
+        name: "Hogwarts Express – King's Cross",
+        questions: [
+          { num: 3, text: "Before you enter Kings Cross Station, stop to read the arrival and departure schedule. Which platform does the train leaving for Newcastle use?", options: ["9","3","13","19"], answer: 0 },
+          { num: 4, text: "The train departing to Doncaster leaves at which time?", options: ["10:49","10:47","12:43","12:49"], answer: 3 },
+          { num: 5, text: "The 10:43 train from York has what status in the comments?", options: ["Late","Boarding","Cancelled","On time"], answer: 1 },
+          { num: 6, text: "What do you read on the comments for the arrival from Watton-at-Stone?", options: ["Cancelled","On time","Late arrival","Missing"], answer: 1 },
+        ]
+      },
+      {
+        name: "Quality Quidditch Supplies",
+        questions: [
+          { num: 7, text: "As you look in the window of Quality Quidditch Supplies, which broomstick is displayed for you to admire?", options: ["Nimbus 2000","Firebolt","Oakshaft 79","Comet 140"], answer: 1 },
+          { num: 8, text: "As you step into this store you will see several cans stacked up on the top of the shelves. What sort of broom care do these cans provide?", options: ["Sandpaper","Bristle cleaner","Wood oil","Wax"], answer: 3 },
+          { num: 9, text: "Which quidditch team do you see posing for you in the enchanted poster?", options: ["Falmouth Falcons","Puddlemere United","Appleby Arrows","Chudley Cannons"], answer: 3 },
+        ]
+      },
+      {
+        name: "Weasleys' Wizard Wheezes",
+        questions: [
+          { num: 10, text: "As you enter Weasleys' Wizard Wheezes, find the notice for this week's managers specials. What will you receive for a little less than you expected when you buy a Decoy Detonator?", options: null, answer: "less than expected" },
+        ]
+      },
+      {
+        name: "Flourish and Blotts",
+        questions: [
+          { num: 11, text: "In what year was Flourish and Blotts booksellers established?", options: ["1454","1545","1954","1554"], answer: 3 },
+          { num: 12, text: "Which of these is NOT one of the items they advertise for sale?", options: ["Spells","Potions","Charms","Herbology"], answer: 3 },
+          { num: 13, text: "In the window, you will find a monster book in his cage. What do you see at the bottom of the cage?", options: ["Newspapers","Bones","Shredded paper","Wood chips"], answer: 2 },
+          { num: 14, text: 'In the window of Flourish and Blotts you will find a large stack of books. Finish this title, "The Decline of ________ Magic."', options: ["Black","Pagan","Muggle","Traditional"], answer: 1 },
+          { num: 15, text: 'Finish this title, "Omens, Oracles and the ________."', options: ["Dark arts","Sacrifice","Origins of magic","Goat"], answer: 3 },
+          { num: 16, text: 'Next door you will find The Daily Prophet. Finish the tagline, "The wizarding world\'s beguiling ________ of choice."', options: ["Newspaper","Broadsheet","Tabloid","Source"], answer: 1 },
+        ]
+      },
+      {
+        name: "Madam Malkin's",
+        questions: [
+          { num: 17, text: "As you stand in front of Madam Malkin's Robes for All Occasions look up at the second story window. What famous piece of clothing do you see from the Harry Potter films?", options: ["Ron's formal robes","Hermione's ball gown","Harry's school robes","Dumbledore's robes"], answer: 3 },
+        ]
+      },
+      {
+        name: "Mulpepper's Apothecary",
+        questions: [
+          { num: 18, text: "Find the display of plants in Mulpepper's Apothecary. In what year was Mulpepper's established?", options: ["1611","1106","1161","1206"], answer: 0 },
+          { num: 19, text: "In the window display for Mulpepper's Apothecary you will find a chalkboard advertising what bat part?", options: ["Wings","Claws","Spleen","Brain"], answer: 0 },
+        ]
+      },
+      {
+        name: "Diagon Alley Signs",
+        questions: [
+          { num: 20, text: "As you walk down Diagon Alley, how many years has Brew and Stews been in business?", options: ["100","200","300","400"], answer: 2 },
+          { num: 21, text: "Magical Cures and Preventions offers classes to combat fear of what?", options: ["Death eaters","Lord Voldemort","Flying","Dementors"], answer: 3 },
+        ]
+      },
+      {
+        name: "Florean Fortescue's Ice Cream Parlor",
+        questions: [
+          { num: 22, text: "As you stand before Florean Fortescue's Ice Cream Parlor, look up at the advertising on the wall above. What sort of treat is advertised?", options: ["Ambrosia","Pudding","Ice Milk","Tapioca"], answer: 1 },
+          { num: 23, text: "Read the sign for today's suggestion. Finish the name of this flavor \"Earl grey and ________.\"", options: ["Whiskey","Lemon","Ale","Lavender"], answer: 3 },
+        ]
+      },
+      {
+        name: "Knockturn Alley",
+        questions: [
+          { num: 24, text: 'Find the sign for Fledermaus and Tanner. Finish this part of the signage, "________ & skin."', options: ["Spiders","Wolves","Vultures","Bats"], answer: 3 },
+          { num: 25, text: "Find the shop for Arachnids Available. Which one of the following is NOT on the sign?", options: ["Web weavers","Good for pets","Bird-eating","Venomous"], answer: 1 },
+          { num: 26, text: "Look around in the darkness to find the sign for what sort of lessons for your tarantula?", options: ["Domestic spiders","Guard spiders","Un-tame","Speaking"], answer: 1 },
+          { num: 27, text: 'Find the sign for E.L.M. Undertakers and Embalmers, "Cross over in ________ style."', options: ["Spellbinding","Grand","Mesmerizing","Grand"], answer: 1 },
+          { num: 28, text: "Continue reading the sign for E.L.M. Undertakers and Embalmers. What sort of magical creature is on duty day and night?", options: ["Wizard","Witch","Ogre","Fairy"], answer: 1 },
+          { num: 29, text: "The Locksmith sign in Knockturn Alley reads that they repair what sort of locks?", options: ["Magical","Sinister","Enchanted","Confounded"], answer: 2 },
+          { num: 30, text: "As you explore Knockturn Alley you will find a set of stairs leading to what sort of shop?", options: ["Pawn broker","Sinister toys","Dark arts","Cloaks"], answer: 0 },
+        ]
+      },
+      {
+        name: "Borgin and Burkes",
+        questions: [
+          { num: 31, text: "Within the sinister shop of Borgin and Burkes find the cursed hand encased in glass. How many muggle owners have perished according to the warning sign?", options: ["Fourteen","Nineteen","Ninety","Seventeen"], answer: 3 },
+          { num: 32, text: "As you explore the curiosities of Borgin and Burkes, you will find a large object holding umbrellas and canes. What sort of object do you see?", options: ["Dragon foot","Wooden leg","Troll foot","Ogre head"], answer: 2 },
+        ]
+      },
+    ]
+  },
+  {
+    id: "simpsons",
+    label: "Simpsons",
+    icon: "🍩",
+    color: "#ffd90f",
+    subsections: [
+      {
+        name: "Springfield",
+        questions: [
+          { num: 33, text: "As you enter Springfield, stop to admire the Springfield billboard. According to the sign, what is Springfield the home of?", options: ["The nuclear power plant","The Isotopes","Duff brewery","The Simpsons"], answer: 3 },
+          { num: 34, text: "Find Android's Dungeon, the comic book store. What reason does the sign give for the store being closed?", options: ["At Lard Lad Donuts","Buying new comic books","On a date with Agnes","Bi monthly Sci-Fi Con"], answer: 3 },
+          { num: 35, text: "Chief Wiggum has crashed his police car. He's holding a donut — how many sprinkles do you see on his donut?", options: ["12","9","5","27"], answer: 0 },
+          { num: 36, text: "What does the police car's vanity license plate read?", options: ["#1POLICE","RALPHDAD","#1DOOFUS","SPRNGFLD"], answer: 2 },
+          { num: 37, text: "As you stand in front of the Duff Brewery you will find the seven Duffs. Which of these is NOT one of the seven Duffs?", options: ["Queasy","Edgy","Drunky","Remorseful"], answer: 3 },
+        ]
+      },
+      {
+        name: "Fast Food Blvd",
+        questions: [
+          { num: 38, text: "As you enter the Fast Food Blvd, which of these is NOT one of the food options you see?", options: ["Cletus Chicken Shack","The Frying Dutchman","Lisa's Teahouse of Horror","Dead Lobster"], answer: 3 },
+        ]
+      },
+      {
+        name: "Springfield Murals & Landmarks",
+        questions: [
+          { num: 39, text: "Find the large mural of Springfield on the wall. What animals do you see Moe chasing?", options: ["Dolphins","Pandas","Killer Whales","Dogs"], answer: 0 },
+          { num: 40, text: "Find Marge and Lisa standing in front of the Aztec theater. What movie is shown on the marquee?", options: ["Face Smasher 6","McBain","The Itchy and Scratchy Movie","The Contrabulous Fabtraption of Professor Horatio Hufnagel"], answer: 3 },
+          { num: 41, text: "Find sideshow Mel pushing a baby carriage. Which Simpsons character do you see in the carriage?", options: ["Santa's Little Helper","Mr. Teeny","Laddie","Snowball II"], answer: 1 },
+          { num: 42, text: "Which Simpson's character is changing the tire on the school bus for Springfield Elementary School?", options: ["Groundskeeper Willie","Otto Mann","Principle Skinner","Miss Hoover"], answer: 1 },
+          { num: 43, text: "Which Simpsons character is being bullied by Jimbo Jones, Kearney and Dolph in the mural?", options: ["Martin","Ralph","Milhouse","Wendell"], answer: 2 },
+          { num: 44, text: "As you continue your exploration of the restaurant, find the mural of the Simpsons characters. Which character is represented by number 123?", options: ["Bubbles","Sea Captain","Wendell","Fallout Boy"], answer: 1 },
+        ]
+      }
+    ]
+  },
+  {
+    id: "sf",
+    label: "S. Francisco", fullLabel: "San Francisco",
+    icon: "🌉",
+    color: "#1a5276",
+    subsections: [
+      {
+        name: "San Francisco Waterfront",
+        questions: [
+          { num: 45, text: "As you stand at the corner of South St. and Water St., you will find a Walgreen Drugs. How much are the zipper bags advertised on the window?", options: ["$1.79",".79¢",".37¢",".20¢"], answer: 0 },
+          { num: 46, text: "In the window of Walgreen Drugs, find the label for Chondrus Crispus. What is this more commonly known as?", options: ["Spanish moss","Ice Cream","Irish moss","Baking soda"], answer: 2 },
+          { num: 47, text: "On the wall you will find a license for the pharmacy. Whose name is printed on this certificate?", options: ["Alfred Klein","Robert Klein","Alfred Newman","Thomas Gates"], answer: 0 },
+          { num: 48, text: "Find the advertisement for the health elixir. Which of these is NOT one of the cures on the list?", options: ["Voting democrat","Delusions of grandeur","Tasteless humor","Hiccups"], answer: 3 },
+          { num: 49, text: "Just below the health elixir sign, what sort of cigarettes does Walgreen Drugs sell?", options: ["Menthol","Sweet breath","Asthma","Low calorie"], answer: 2 },
+          { num: 50, text: "What product does Aunt Angela's sell in Walgreen Drugs?", options: ["Catnip","Butter cookies","Flower seeds","Scalp conditioner"], answer: 3 },
+          { num: 51, text: "On your travels stop near the water. What is the fine for fishing off the dock according to the posted sign?", options: ["$10.00","$1,000.00","$10,000.00","$100.00"], answer: 2 },
+          { num: 52, text: "Find the large bronze statue in the square. What prominent figure does this statue salute?", options: ["Carl Laemmle","Lew Wasserman","Ronald Meyer","Charles O. Baumann"], answer: 0 },
+          { num: 53, text: "Find the old fashion ice cream shop sign on your way down the street. How many flavors do they sell?", options: ["17","31","12","170"], answer: 1 },
+        ]
+      }
+    ]
+  },
+  {
+    id: "nys",
+    label: "New York", fullLabel: "New York Street",
+    icon: "🗽",
+    color: "#2e4a1e",
+    subsections: [
+      {
+        name: "New York Street",
+        questions: [
+          { num: 54, text: 'Find the alley next to Hackenburg\'s appliance store. Across the alley is a music store. Find the neon sign and finish the words, "Piano ________."', options: ["Rolls","Keys","Music","Tuning"], answer: 0 },
+          { num: 55, text: "Down the alley, you will find the barber shop. How much is a children's haircut?", options: ["$2.50","$2.00","$5.00","$20.00"], answer: 0 },
+          { num: 56, text: "Look closely and you will find the name of the barber. What is his name?", options: ["Tom","Bob","Max","Jack"], answer: 2 },
+          { num: 57, text: "Continue your exploration of the alley and find the bronze plaque for the London Assurance. What year was this established?", options: ["1270","1970","1920","1720"], answer: 3 },
+          { num: 58, text: "Leroy Piper has a business in this area. He sells second hand what?", options: ["Clothing","Furniture","Roses","Jewelry"], answer: 2 },
+          { num: 59, text: "Back on the main street you will find the sign for Miss Alma's Ballroom dancing. How many beautiful girls are there to dance with?", options: ["25","45","35","3"], answer: 2 },
+          { num: 60, text: "Head back to New York street and find the arcade. What horror film poster hangs in the shadow box on the right side of the entrance?", options: ["The Black Cat","Frankenstein","Curse of the Mummy","The Creature from the Black Lagoon"], answer: 0 },
+          { num: 61, text: "Across the street from the arcade you will find a Pawn broker shop. As you read the awning, which of these is NOT one of the items they specialize in?", options: ["Luggage","Jewelry","Watches","Gold"], answer: 0 },
+          { num: 62, text: "As you read the sign post on the corner, what arcade is down this alleyway?", options: ["Long Island","Coney Island","Cayman Island","Staten Island"], answer: 1 },
+          { num: 63, text: "Look into the window of the Manhattan Motor Repair. What brand of sewing machine do you see in the window?", options: ["Viking","Toyota","Singer","Brother"], answer: 2 },
+          { num: 64, text: "What famous person adorns the cover of Time magazine framed on the wall of Manhattan Motor Repair?", options: ["Douglas MacArthur","Governor Earl Long","President Roosevelt","Clark Gable"], answer: 0 },
+        ]
+      }
+    ]
+  }
+];
+
+// ── State ──────────────────────────────────────────────────────────────
+const STATE_KEY = 'scavenger_hunt_v1';
+let state = loadState();
+
+function loadState() {
+  try {
+    const s = localStorage.getItem(STATE_KEY);
+    if (s) return JSON.parse(s);
+  } catch(e) {}
+  return { answers: {}, startTime: null, endTime: null };
+}
+function saveState() {
+  try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+// ── Build UI ────────────────────────────────────────────────────────────
+const tabsEl = document.getElementById('tabs');
+const containerEl = document.getElementById('sections-container');
+
+HUNT_DATA.forEach((section, si) => {
+  // Tab
+  const tab = document.createElement('button');
+  tab.className = 'tab-btn' + (si === 0 ? ' active' : '');
+  tab.dataset.section = section.id;
+  tab.innerHTML = `<span class="tab-icon">${section.icon}</span><span class="tab-label">${section.label}</span><span class="tab-progress" id="tp-${section.id}"></span>`;
+  tab.addEventListener('click', () => switchTab(section.id));
+  tabsEl.appendChild(tab);
+
+  // Section div
+  const sec = document.createElement('div');
+  sec.className = 'section' + (si === 0 ? ' active' : '');
+  sec.id = 'sec-' + section.id;
+
+  // section header
+  const hdr = document.createElement('div');
+  hdr.className = 'section-header';
+  hdr.innerHTML = `
+    <div class="section-icon" style="background:${section.color}22; color:${section.color === '#ffd90f' ? '#c9a800' : section.color}">${section.icon}</div>
+    <div>
+      <div class="section-title">${section.fullLabel || section.label}</div>
+      <div class="section-subtitle">${section.subsections.reduce((a,s)=>a+s.questions.length,0)} questions across ${section.subsections.length} areas</div>
+    </div>
+  `;
+  sec.appendChild(hdr);
+
+  section.subsections.forEach(sub => {
+    const lbl = document.createElement('div');
+    lbl.className = 'subsection-label';
+    lbl.textContent = sub.name;
+    sec.appendChild(lbl);
+
+    sub.questions.forEach(q => {
+      sec.appendChild(buildQuestionCard(q));
+    });
+  });
+
+  containerEl.appendChild(sec);
+});
+
+function buildQuestionCard(q) {
+  const card = document.createElement('div');
+  card.className = 'question-card';
+  card.id = 'card-' + q.num;
+
+  const numEl = document.createElement('div');
+  numEl.className = 'question-num';
+  numEl.textContent = `Q${q.num}`;
+  card.appendChild(numEl);
+
+  const textEl = document.createElement('div');
+  textEl.className = 'question-text';
+  textEl.textContent = q.text;
+  card.appendChild(textEl);
+
+  if (q.options === null) {
+    // Open answer
+    const wrap = document.createElement('div');
+    wrap.className = 'open-answer-wrap';
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'open-answer-input';
+    input.placeholder = 'Type your answer…';
+    input.id = 'input-' + q.num;
+    const btn = document.createElement('button');
+    btn.className = 'open-submit-btn';
+    btn.textContent = 'Submit';
+    btn.id = 'submit-' + q.num;
+    wrap.appendChild(input);
+    wrap.appendChild(btn);
+    card.appendChild(wrap);
+
+    const fb = document.createElement('div');
+    fb.className = 'feedback-msg';
+    fb.id = 'fb-' + q.num;
+    card.appendChild(fb);
+
+    btn.addEventListener('click', () => {
+      const val = input.value.trim().toLowerCase();
+      if (!val) return;
+      // For open answer we mark as "answered" and show what they wrote
+      const correct = val.length > 0; // just mark any answer as submitted
+      markAnswered(q.num, true, card, input, btn, fb, `Submitted: "${input.value.trim()}" — check the answer guide!`, true);
+    });
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') btn.click(); });
+  } else {
+    // Multiple choice
+    const opts = document.createElement('div');
+    opts.className = 'options';
+    const letters = ['a','b','c','d'];
+    q.options.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'opt-btn';
+      btn.dataset.idx = i;
+      btn.dataset.q = q.num;
+      btn.innerHTML = `<span class="opt-letter">${letters[i]}.</span>${opt}`;
+      btn.addEventListener('click', () => handleAnswer(q, i, btn, opts, card));
+      opts.appendChild(btn);
+    });
+    card.appendChild(opts);
+
+    const fb = document.createElement('div');
+    fb.className = 'feedback-msg';
+    fb.id = 'fb-' + q.num;
+    card.appendChild(fb);
+  }
+
+  // Restore saved state
+  const saved = state.answers['Q' + q.num];
+  if (saved) restoreCard(q, card, saved.correct);
+
+  return card;
+}
+
+function handleAnswer(q, chosen, btn, optsEl, card) {
+  const saved = state.answers['Q' + q.num];
+  if (saved && saved.correct) return; // already answered correctly
+
+  const correct = chosen === q.answer;
+  const fb = document.getElementById('fb-' + q.num);
+
+  if (correct) {
+    // Lock all buttons, highlight correct green
+    Array.from(optsEl.children).forEach((b, i) => {
+      b.disabled = true;
+      if (i === q.answer) b.classList.add('correct');
+    });
+    card.classList.remove('answered-wrong');
+    card.classList.add('answered-correct');
+    const wrongGuesses = (state.answers['Q' + q.num] || {}).wrongGuesses || 0;
+    const pts = Math.max(0, 3 - wrongGuesses * 2);
+    fb.className = 'feedback-msg correct';
+    fb.textContent = wrongGuesses === 0 ? '✓ Correct! +3 pts' : `✓ Correct! +${pts} pt${pts !== 1 ? 's' : ''}`;
+    state.answers['Q' + q.num] = { answered: true, correct: true, wrongGuesses };
+    saveState();
+    updateScoreboard();
+    checkFinish();
+  } else {
+    // Increment wrong guesses for this question
+    const cur = state.answers['Q' + q.num] || { answered: false, correct: false, wrongGuesses: 0 };
+    cur.wrongGuesses = (cur.wrongGuesses || 0) + 1;
+    state.answers['Q' + q.num] = cur;
+    saveState();
+
+    // Show point value feedback
+    const pts = Math.max(0, 3 - cur.wrongGuesses * 2);
+    const ptMsg = pts > 0 ? ` (now worth ${pts} pt${pts !== 1 ? 's' : ''})` : ' (0 pts if answered)';
+    btn.classList.add('wrong');
+    card.classList.add('answered-wrong');
+    fb.className = 'feedback-msg wrong';
+    fb.textContent = '✗ Not quite — try again!' + ptMsg;
+    updateScoreboard();
+
+    // Re-enable after brief flash
+    setTimeout(() => {
+      btn.classList.remove('wrong');
+      btn.disabled = false;
+    }, 800);
+  }
+}
+
+function markAnswered(num, correct, card, input, btn, fb, msg, isOpen) {
+  input.disabled = true;
+  btn.disabled = true;
+  card.classList.add('answered-correct'); // open answers get green
+  fb.className = 'feedback-msg correct';
+  fb.textContent = msg;
+  state.answers['Q' + num] = { answered: true, correct: true };
+  saveState();
+  updateScoreboard();
+  checkFinish();
+}
+
+function restoreCard(q, card, correct) {
+  if (q.options === null) {
+    const input = document.getElementById('input-' + q.num);
+    const btn = document.getElementById('submit-' + q.num);
+    const fb = document.getElementById('fb-' + q.num);
+    if (input) input.disabled = true;
+    if (btn) btn.disabled = true;
+    card.classList.add('answered-correct');
+    if (fb) { fb.className = 'feedback-msg correct'; fb.textContent = 'Previously submitted.'; }
+  } else if (correct) {
+    // Fully answered correctly — lock it
+    const optsEl = card.querySelector('.options');
+    const fb = document.getElementById('fb-' + q.num);
+    if (optsEl) {
+      Array.from(optsEl.children).forEach((b, i) => {
+        b.disabled = true;
+        if (i === q.answer) b.classList.add('correct');
+      });
+    }
+    card.classList.add('answered-correct');
+    if (fb) {
+      const wg = (state.answers['Q' + q.num] || {}).wrongGuesses || 0;
+      const pts = Math.max(0, 3 - wg * 2);
+      fb.className = 'feedback-msg correct';
+      fb.textContent = wg === 0 ? '✓ Correct! +3 pts' : `✓ Correct! +${pts} pt${pts !== 1 ? 's' : ''}`;
+    }
+  } else {
+    // Had a wrong guess but not yet correct — leave interactive, show hint
+    const fb = document.getElementById('fb-' + q.num);
+    if (fb) {
+      const wg = (state.answers['Q' + q.num] || {}).wrongGuesses || 0;
+      const pts = Math.max(0, 3 - wg * 2);
+      const ptMsg = pts > 0 ? ` (now worth ${pts} pt${pts !== 1 ? 's' : ''})` : ' (0 pts if answered)';
+      fb.className = 'feedback-msg wrong';
+      fb.textContent = '✗ Not quite — try again!' + ptMsg;
+    }
+    card.classList.add('answered-wrong');
+  }
+}
+
+function switchTab(id) {
+  document.querySelectorAll('.tab-btn').forEach(t => t.classList.toggle('active', t.dataset.section === id));
+  document.querySelectorAll('.section').forEach(s => s.classList.toggle('active', s.id === 'sec-' + id));
+}
+
+function calcPoints() {
+  let pts = 0;
+  HUNT_DATA.forEach(sec => sec.subsections.forEach(sub => sub.questions.forEach(q => {
+    const s = state.answers['Q' + q.num];
+    if (s && s.correct) {
+      pts += Math.max(0, 3 - (s.wrongGuesses || 0) * 2);
+    }
+  })));
+  return pts;
+}
+
+function updateScoreboard() {
+  let correct = 0, total = 0;
+  HUNT_DATA.forEach(sec => sec.subsections.forEach(sub => sub.questions.forEach(q => {
+    total++;
+    const s = state.answers['Q' + q.num];
+    if (s && s.correct) correct++;
+  })));
+  const pts = calcPoints();
+  const maxPts = total * 3;
+  document.getElementById('sc-points').textContent = pts;
+  document.getElementById('sc-max').textContent = '/ ' + maxPts;
+  document.getElementById('sc-correct').textContent = correct;
+  document.getElementById('sc-remaining').textContent = total - correct;
+
+  // Update tab progress indicators
+  HUNT_DATA.forEach(sec => {
+    let sc = 0, st = 0;
+    sec.subsections.forEach(sub => sub.questions.forEach(q => {
+      st++;
+      const s = state.answers['Q' + q.num];
+      if (s && s.correct) sc++;
+    }));
+    const tp = document.getElementById('tp-' + sec.id);
+    if (tp) tp.textContent = sc > 0 ? `${sc}/${st}` : '';
+  });
+}
+
+function checkFinish() {
+  let total = 0, correct = 0;
+  HUNT_DATA.forEach(s => s.subsections.forEach(sub => sub.questions.forEach(q => {
+    total++;
+    const a = state.answers['Q' + q.num];
+    if (a && a.correct) correct++;
+  })));
+  if (correct === total) {
+    stopTimer();
+    const banner = document.getElementById('finish-banner');
+    banner.style.display = 'block';
+    let correct = Object.values(state.answers).filter(a => a.correct).length;
+    const timeEl = document.getElementById('sc-timer');
+    const timeStr = timeEl ? timeEl.textContent : '';
+    const finalPts = calcPoints();
+    const maxPts = total * 3;
+    document.getElementById('finish-score').textContent = `${finalPts} / ${maxPts} points · ${correct}/${total} correct · Completed in ${timeStr}`;
+  }
+}
+
+document.getElementById('reset-btn').addEventListener('click', () => {
+  if (!confirm('Reset all progress? This cannot be undone.')) return;
+  state = { answers: {}, startTime: null, endTime: null };
+  saveState();
+  location.reload();
+});
+
+
+// ── Timer ───────────────────────────────────────────────────────────────
+let timerInterval = null;
+
+function formatTime(ms) {
+  const totalSec = Math.floor(ms / 1000);
+  const m = Math.floor(totalSec / 60);
+  const s = totalSec % 60;
+  return m + ':' + String(s).padStart(2, '0');
+}
+
+function startTimer() {
+  if (timerInterval || state.endTime) return;
+  if (!state.startTime) {
+    state.startTime = Date.now();
+    saveState();
+  }
+  timerInterval = setInterval(() => {
+    const el = document.getElementById('sc-timer');
+    if (el) el.textContent = formatTime(Date.now() - state.startTime);
+  }, 1000);
+}
+
+function stopTimer() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  state.endTime = Date.now();
+  saveState();
+  const el = document.getElementById('sc-timer');
+  if (el) {
+    el.textContent = formatTime(state.endTime - state.startTime);
+    el.classList.add('stopped');
+  }
+}
+
+function restoreTimer() {
+  if (state.endTime && state.startTime) {
+    const el = document.getElementById('sc-timer');
+    if (el) {
+      el.textContent = formatTime(state.endTime - state.startTime);
+      el.classList.add('stopped');
+    }
+  } else if (state.startTime) {
+    const el = document.getElementById('sc-timer');
+    if (el) el.textContent = formatTime(Date.now() - state.startTime);
+    timerInterval = setInterval(() => {
+      if (el) el.textContent = formatTime(Date.now() - state.startTime);
+    }, 1000);
+  }
+}
+
+// ── Splash ──────────────────────────────────────────────────────────────
+const splashEl = document.getElementById('splash');
+const goBtnEl = document.getElementById('go-btn');
+
+function dismissSplash() {
+  splashEl.classList.add('hidden');
+  startTimer();
+}
+
+// If game already in progress (has a startTime), skip splash
+if (state.startTime) {
+  splashEl.classList.add('hidden');
+} else {
+  goBtnEl.addEventListener('click', dismissSplash);
+}
+
+// Init scoreboard
+updateScoreboard();
+restoreTimer();
+checkFinish();
+</script>
+</body>
+</html>
