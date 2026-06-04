@@ -418,20 +418,20 @@
   /* RESET */
   #reset-btn {
     background: transparent;
-    border: none;
-    color: var(--muted);
+    border: 1px solid var(--border);
+    color: var(--text);
     font-family: 'DM Mono', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 0.1em;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     cursor: pointer;
-    padding: 0.3rem 0.5rem;
-    border-radius: 4px;
-    transition: color 0.2s;
+    padding: 0.35rem 0.75rem;
+    border-radius: 5px;
+    transition: all 0.2s;
     line-height: 1;
     white-space: nowrap;
   }
-  #reset-btn:hover { color: var(--accent2); }
+  #reset-btn:hover { border-color: var(--accent2); color: var(--accent2); }
   #scoreboard-wrap {
     background: var(--surface);
     border-bottom: 1px solid var(--border);
@@ -541,15 +541,15 @@ const HUNT_DATA = [
         name: "Diagon Alley",
         questions: [
           { num: 1, text: "As you approach the Knight Bus, stop for a moment to chat with the shrunken head next to the driver's seat. What is the name of this shrunken head?", options: ["Dre Head","Dr. Dre","Dread Head","Jack"], answer: 0 },
-          { num: 2, text: "What color beads will you find in the hair of the shrunken head on the Knight Bus?", options: ["Red and Blue","Blue and Green","Green and Yellow","Yellow and Red"], answer: 0 },
+          { num: 2, text: "What color beads will you find in the hair of the shrunken head on the Knight Bus?", options: ["Red and Blue","Blue and Green","Green and Yellow","Yellow and Red"], answer: 2 },
         ]
       },
       {
         name: "Hogwarts Express – King's Cross",
         questions: [
           { num: 3, text: "Before you enter Kings Cross Station, stop to read the arrival and departure schedule. Which platform does the train leaving for Newcastle use?", options: ["9","3","13","19"], answer: 0 },
-          { num: 4, text: "The train departing to Doncaster leaves at which time?", options: ["10:49","10:47","12:43","12:49"], answer: 3 },
-          { num: 5, text: "The 10:43 train from York has what status in the comments?", options: ["Late","Boarding","Cancelled","On time"], answer: 1 },
+          { num: 4, text: "The train departing to Doncaster leaves at which time?", options: ["10:49","10:47","12:43","12:49"], answer: 1 },
+          { num: 5, text: "The 10:43 train from York has what status in the comments?", options: ["Late","Boarding","Cancelled","On time"], answer: 3 },
           { num: 6, text: "What do you read on the comments for the arrival from Watton-at-Stone?", options: ["Cancelled","On time","Late arrival","Missing"], answer: 1 },
         ]
       },
@@ -570,8 +570,8 @@ const HUNT_DATA = [
       {
         name: "Flourish and Blotts",
         questions: [
-          { num: 11, text: "In what year was Flourish and Blotts booksellers established?", options: ["1454","1545","1954","1554"], answer: 3 },
-          { num: 12, text: "Which of these is NOT one of the items they advertise for sale?", options: ["Spells","Potions","Charms","Herbology"], answer: 3 },
+          { num: 11, text: "In what year was Flourish and Blotts booksellers established?", options: ["1454","1545","1954","1554"], answer: 0 },
+          { num: 12, text: "As you stand before Flourish and Blotts, read the signs for this shop. Which of these is NOT one of the items they advertise for sale?", options: ["Spells","Potions","Charms","Herbology"], answer: 0 },
           { num: 13, text: "In the window, you will find a monster book in his cage. What do you see at the bottom of the cage?", options: ["Newspapers","Bones","Shredded paper","Wood chips"], answer: 2 },
           { num: 14, text: 'In the window of Flourish and Blotts you will find a large stack of books. Finish this title, "The Decline of ________ Magic."', options: ["Black","Pagan","Muggle","Traditional"], answer: 1 },
           { num: 15, text: 'Finish this title, "Omens, Oracles and the ________."', options: ["Dark arts","Sacrifice","Origins of magic","Goat"], answer: 3 },
@@ -581,27 +581,27 @@ const HUNT_DATA = [
       {
         name: "Madam Malkin's",
         questions: [
-          { num: 17, text: "As you stand in front of Madam Malkin's Robes for All Occasions look up at the second story window. What famous piece of clothing do you see from the Harry Potter films?", options: ["Ron's formal robes","Hermione's ball gown","Harry's school robes","Dumbledore's robes"], answer: 3 },
+          { num: 17, text: "As you stand in front of Madam Malkin's Robes for All Occasions look up at the second story window. What famous piece of clothing do you see from the Harry Potter films?", options: ["Ron's formal robes","Hermione's ball gown","Harry's school robes","Dumbledore's robes"], answer: 1 },
         ]
       },
       {
         name: "Mulpepper's Apothecary",
         questions: [
-          { num: 18, text: "Find the display of plants in Mulpepper's Apothecary. In what year was Mulpepper's established?", options: ["1611","1106","1161","1206"], answer: 0 },
-          { num: 19, text: "In the window display for Mulpepper's Apothecary you will find a chalkboard advertising what bat part?", options: ["Wings","Claws","Spleen","Brain"], answer: 0 },
+          { num: 18, text: "Find the display of plants in Mulpepper's Apothecary. In what year was Mulpepper's established?", options: ["1611","1106","1161","1206"], answer: 1 },
+          { num: 19, text: "In the window display for Mulpepper's Apothecary you will find a chalkboard advertising what bat part?", options: ["Wings","Claws","Spleen","Brain"], answer: 2 },
         ]
       },
       {
         name: "Diagon Alley Signs",
         questions: [
-          { num: 20, text: "As you walk down Diagon Alley, how many years has Brew and Stews been in business?", options: ["100","200","300","400"], answer: 2 },
-          { num: 21, text: "Magical Cures and Preventions offers classes to combat fear of what?", options: ["Death eaters","Lord Voldemort","Flying","Dementors"], answer: 3 },
+          { num: 20, text: "As you walk down Diagon Alley, how many years has Brew and Stews been in business?", options: ["100","200","300","400"], answer: 3 },
+          { num: 21, text: "Magical Cures and Preventions offers classes to combat fear of what?", options: ["Death eaters","Lord Voldemort","Flying","Dementors"], answer: 2 },
         ]
       },
       {
         name: "Florean Fortescue's Ice Cream Parlor",
         questions: [
-          { num: 22, text: "As you stand before Florean Fortescue's Ice Cream Parlor, look up at the advertising on the wall above. What sort of treat is advertised?", options: ["Ambrosia","Pudding","Ice Milk","Tapioca"], answer: 1 },
+          { num: 22, text: "As you stand before Florean Fortescue's Ice Cream Parlor, look up at the advertising on the wall above. What sort of treat is advertised?", options: ["Ambrosia","Pudding","Ice Milk","Tapioca"], answer: 0 },
           { num: 23, text: "Read the sign for today's suggestion. Finish the name of this flavor \"Earl grey and ________.\"", options: ["Whiskey","Lemon","Ale","Lavender"], answer: 3 },
         ]
       },
@@ -609,18 +609,18 @@ const HUNT_DATA = [
         name: "Knockturn Alley",
         questions: [
           { num: 24, text: 'Find the sign for Fledermaus and Tanner. Finish this part of the signage, "________ & skin."', options: ["Spiders","Wolves","Vultures","Bats"], answer: 3 },
-          { num: 25, text: "Find the shop for Arachnids Available. Which one of the following is NOT on the sign?", options: ["Web weavers","Good for pets","Bird-eating","Venomous"], answer: 1 },
-          { num: 26, text: "Look around in the darkness to find the sign for what sort of lessons for your tarantula?", options: ["Domestic spiders","Guard spiders","Un-tame","Speaking"], answer: 1 },
-          { num: 27, text: 'Find the sign for E.L.M. Undertakers and Embalmers, "Cross over in ________ style."', options: ["Spellbinding","Grand","Mesmerizing","Grand"], answer: 1 },
+          { num: 25, text: "Find the shop for Arachnids Available. Which one of the following is NOT on the sign?", options: ["Web weavers","Good for pets","Bird-eating","Venomous"], answer: 0 },
+          { num: 26, text: "Look around in the darkness to find the sign for what sort of lessons for your tarantula?", options: ["Domestic spiders","Guard spiders","Un-tame","Speaking"], answer: 2 },
+          { num: 27, text: 'Find the sign for E.L.M. Undertakers and Embalmers, "Cross over in ________ style."', options: ["Spellbinding","Grand","Mesmerizing","Grand"], answer: 2 },
           { num: 28, text: "Continue reading the sign for E.L.M. Undertakers and Embalmers. What sort of magical creature is on duty day and night?", options: ["Wizard","Witch","Ogre","Fairy"], answer: 1 },
-          { num: 29, text: "The Locksmith sign in Knockturn Alley reads that they repair what sort of locks?", options: ["Magical","Sinister","Enchanted","Confounded"], answer: 2 },
+          { num: 29, text: "The Locksmith sign in Knockturn Alley reads that they repair what sort of locks?", options: ["Magical","Sinister","Enchanted","Confounded"], answer: 3 },
           { num: 30, text: "As you explore Knockturn Alley you will find a set of stairs leading to what sort of shop?", options: ["Pawn broker","Sinister toys","Dark arts","Cloaks"], answer: 0 },
         ]
       },
       {
         name: "Borgin and Burkes",
         questions: [
-          { num: 31, text: "Within the sinister shop of Borgin and Burkes find the cursed hand encased in glass. How many muggle owners have perished according to the warning sign?", options: ["Fourteen","Nineteen","Ninety","Seventeen"], answer: 3 },
+          { num: 31, text: "Within the sinister shop of Borgin and Burkes find the cursed hand encased in glass. How many muggle owners have perished according to the warning sign?", options: ["Fourteen","Nineteen","Ninety","Seventeen"], answer: 1 },
           { num: 32, text: "As you explore the curiosities of Borgin and Burkes, you will find a large object holding umbrellas and canes. What sort of object do you see?", options: ["Dragon foot","Wooden leg","Troll foot","Ogre head"], answer: 2 },
         ]
       },
@@ -635,11 +635,11 @@ const HUNT_DATA = [
       {
         name: "Springfield",
         questions: [
-          { num: 33, text: "As you enter Springfield, stop to admire the Springfield billboard. According to the sign, what is Springfield the home of?", options: ["The nuclear power plant","The Isotopes","Duff brewery","The Simpsons"], answer: 3 },
+          { num: 33, text: "As you enter Springfield, stop to admire the Springfield billboard. According to the sign, what is Springfield the home of?", options: ["The nuclear power plant","The Isotopes","Duff brewery","The Simpsons"], answer: 0 },
           { num: 34, text: "Find Android's Dungeon, the comic book store. What reason does the sign give for the store being closed?", options: ["At Lard Lad Donuts","Buying new comic books","On a date with Agnes","Bi monthly Sci-Fi Con"], answer: 3 },
-          { num: 35, text: "Chief Wiggum has crashed his police car. He's holding a donut — how many sprinkles do you see on his donut?", options: ["12","9","5","27"], answer: 0 },
+          { num: 35, text: "Chief Wiggum has crashed his police car. He's holding a donut — how many sprinkles do you see on his donut?", options: ["12","9","5","27"], answer: 1 },
           { num: 36, text: "What does the police car's vanity license plate read?", options: ["#1POLICE","RALPHDAD","#1DOOFUS","SPRNGFLD"], answer: 2 },
-          { num: 37, text: "As you stand in front of the Duff Brewery you will find the seven Duffs. Which of these is NOT one of the seven Duffs?", options: ["Queasy","Edgy","Drunky","Remorseful"], answer: 3 },
+          { num: 37, text: "As you stand in front of the Duff Brewery you will find the seven Duffs. Which of these is NOT one of the seven Duffs?", options: ["Queasy","Edgy","Drunky","Remorseful"], answer: 2 },
         ]
       },
       {
@@ -651,12 +651,12 @@ const HUNT_DATA = [
       {
         name: "Springfield Murals & Landmarks",
         questions: [
-          { num: 39, text: "Find the large mural of Springfield on the wall. What animals do you see Moe chasing?", options: ["Dolphins","Pandas","Killer Whales","Dogs"], answer: 0 },
-          { num: 40, text: "Find Marge and Lisa standing in front of the Aztec theater. What movie is shown on the marquee?", options: ["Face Smasher 6","McBain","The Itchy and Scratchy Movie","The Contrabulous Fabtraption of Professor Horatio Hufnagel"], answer: 3 },
+          { num: 39, text: "Find the large mural of Springfield on the wall. What animals do you see Moe chasing?", options: ["Dolphins","Pandas","Killer Whales","Dogs"], answer: 1 },
+          { num: 40, text: "Find Marge and Lisa standing in front of the Aztec theater. What movie is shown on the marquee?", options: ["Face Smasher 6","McBain","The Itchy and Scratchy Movie","The Contrabulous Fabtraption of Professor Horatio Hufnagel"], answer: 0 },
           { num: 41, text: "Find sideshow Mel pushing a baby carriage. Which Simpsons character do you see in the carriage?", options: ["Santa's Little Helper","Mr. Teeny","Laddie","Snowball II"], answer: 1 },
-          { num: 42, text: "Which Simpson's character is changing the tire on the school bus for Springfield Elementary School?", options: ["Groundskeeper Willie","Otto Mann","Principle Skinner","Miss Hoover"], answer: 1 },
-          { num: 43, text: "Which Simpsons character is being bullied by Jimbo Jones, Kearney and Dolph in the mural?", options: ["Martin","Ralph","Milhouse","Wendell"], answer: 2 },
-          { num: 44, text: "As you continue your exploration of the restaurant, find the mural of the Simpsons characters. Which character is represented by number 123?", options: ["Bubbles","Sea Captain","Wendell","Fallout Boy"], answer: 1 },
+          { num: 42, text: "Which Simpson's character is changing the tire on the school bus for Springfield Elementary School?", options: ["Groundskeeper Willie","Otto Mann","Principle Skinner","Miss Hoover"], answer: 3 },
+          { num: 43, text: "Which Simpsons character is being bullied by Jimbo Jones, Kearney and Dolph in the mural?", options: ["Martin","Ralph","Milhouse","Wendell"], answer: 0 },
+          { num: 44, text: "As you continue your exploration of the restaurant, find the mural of the Simpsons characters. Which character is represented by number 123?", options: ["Bubbles","Sea Captain","Wendell","Fallout Boy"], answer: 3 },
         ]
       }
     ]
@@ -670,15 +670,15 @@ const HUNT_DATA = [
       {
         name: "San Francisco Waterfront",
         questions: [
-          { num: 45, text: "As you stand at the corner of South St. and Water St., you will find a Walgreen Drugs. How much are the zipper bags advertised on the window?", options: ["$1.79",".79¢",".37¢",".20¢"], answer: 0 },
+          { num: 45, text: "As you stand at the corner of South St. and Water St., you will find a Walgreen Drugs. How much are the zipper bags advertised on the window?", options: ["$1.79",".79¢",".37¢",".20¢"], answer: 1 },
           { num: 46, text: "In the window of Walgreen Drugs, find the label for Chondrus Crispus. What is this more commonly known as?", options: ["Spanish moss","Ice Cream","Irish moss","Baking soda"], answer: 2 },
           { num: 47, text: "On the wall you will find a license for the pharmacy. Whose name is printed on this certificate?", options: ["Alfred Klein","Robert Klein","Alfred Newman","Thomas Gates"], answer: 0 },
           { num: 48, text: "Find the advertisement for the health elixir. Which of these is NOT one of the cures on the list?", options: ["Voting democrat","Delusions of grandeur","Tasteless humor","Hiccups"], answer: 3 },
           { num: 49, text: "Just below the health elixir sign, what sort of cigarettes does Walgreen Drugs sell?", options: ["Menthol","Sweet breath","Asthma","Low calorie"], answer: 2 },
-          { num: 50, text: "What product does Aunt Angela's sell in Walgreen Drugs?", options: ["Catnip","Butter cookies","Flower seeds","Scalp conditioner"], answer: 3 },
-          { num: 51, text: "On your travels stop near the water. What is the fine for fishing off the dock according to the posted sign?", options: ["$10.00","$1,000.00","$10,000.00","$100.00"], answer: 2 },
-          { num: 52, text: "Find the large bronze statue in the square. What prominent figure does this statue salute?", options: ["Carl Laemmle","Lew Wasserman","Ronald Meyer","Charles O. Baumann"], answer: 0 },
-          { num: 53, text: "Find the old fashion ice cream shop sign on your way down the street. How many flavors do they sell?", options: ["17","31","12","170"], answer: 1 },
+          { num: 50, text: "What product does Aunt Angela's sell in Walgreen Drugs?", options: ["Catnip","Butter cookies","Flower seeds","Scalp conditioner"], answer: 0 },
+          { num: 51, text: "On your travels stop near the water. What is the fine for fishing off the dock according to the posted sign?", options: ["$10.00","$1,000.00","$10,000.00","$100.00"], answer: 3 },
+          { num: 52, text: "Find the large bronze statue in the square. What prominent figure does this statue salute?", options: ["Carl Laemmle","Lew Wasserman","Ronald Meyer","Charles O. Baumann"], answer: 1 },
+          { num: 53, text: "Find the old fashion ice cream shop sign on your way down the street. How many flavors do they sell?", options: ["17","31","12","170"], answer: 0 },
         ]
       }
     ]
@@ -693,16 +693,16 @@ const HUNT_DATA = [
         name: "New York Street",
         questions: [
           { num: 54, text: 'Find the alley next to Hackenburg\'s appliance store. Across the alley is a music store. Find the neon sign and finish the words, "Piano ________."', options: ["Rolls","Keys","Music","Tuning"], answer: 0 },
-          { num: 55, text: "Down the alley, you will find the barber shop. How much is a children's haircut?", options: ["$2.50","$2.00","$5.00","$20.00"], answer: 0 },
+          { num: 55, text: "Down the alley, you will find the barber shop. How much is a children's haircut?", options: ["$2.50","$2.00","$5.00","$20.00"], answer: 1 },
           { num: 56, text: "Look closely and you will find the name of the barber. What is his name?", options: ["Tom","Bob","Max","Jack"], answer: 2 },
           { num: 57, text: "Continue your exploration of the alley and find the bronze plaque for the London Assurance. What year was this established?", options: ["1270","1970","1920","1720"], answer: 3 },
-          { num: 58, text: "Leroy Piper has a business in this area. He sells second hand what?", options: ["Clothing","Furniture","Roses","Jewelry"], answer: 2 },
+          { num: 58, text: "Leroy Piper has a business in this area. He sells second hand what?", options: ["Clothing","Furniture","Roses","Jewelry"], answer: 1 },
           { num: 59, text: "Back on the main street you will find the sign for Miss Alma's Ballroom dancing. How many beautiful girls are there to dance with?", options: ["25","45","35","3"], answer: 2 },
           { num: 60, text: "Head back to New York street and find the arcade. What horror film poster hangs in the shadow box on the right side of the entrance?", options: ["The Black Cat","Frankenstein","Curse of the Mummy","The Creature from the Black Lagoon"], answer: 0 },
-          { num: 61, text: "Across the street from the arcade you will find a Pawn broker shop. As you read the awning, which of these is NOT one of the items they specialize in?", options: ["Luggage","Jewelry","Watches","Gold"], answer: 0 },
+          { num: 61, text: "Across the street from the arcade you will find a Pawn broker shop. As you read the awning, which of these is NOT one of the items they specialize in?", options: ["Luggage","Jewelry","Watches","Gold"], answer: 3 },
           { num: 62, text: "As you read the sign post on the corner, what arcade is down this alleyway?", options: ["Long Island","Coney Island","Cayman Island","Staten Island"], answer: 1 },
           { num: 63, text: "Look into the window of the Manhattan Motor Repair. What brand of sewing machine do you see in the window?", options: ["Viking","Toyota","Singer","Brother"], answer: 2 },
-          { num: 64, text: "What famous person adorns the cover of Time magazine framed on the wall of Manhattan Motor Repair?", options: ["Douglas MacArthur","Governor Earl Long","President Roosevelt","Clark Gable"], answer: 0 },
+          { num: 64, text: "What famous person adorns the cover of Time magazine framed on the wall of Manhattan Motor Repair?", options: ["Douglas MacArthur","Governor Earl Long","President Roosevelt","Clark Gable"], answer: 1 },
         ]
       }
     ]
@@ -710,7 +710,7 @@ const HUNT_DATA = [
 ];
 
 // ── State ──────────────────────────────────────────────────────────────
-const STATE_KEY = 'scavenger_hunt_v1';
+const STATE_KEY = 'scavenger_hunt_v3';
 let state = loadState();
 
 function loadState() {
