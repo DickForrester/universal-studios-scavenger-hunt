@@ -564,7 +564,7 @@ const HUNT_DATA = [
       {
         name: "Weasleys' Wizard Wheezes",
         questions: [
-          { num: 10, text: "As you enter Weasleys' Wizard Wheezes, find the notice for this week's managers specials. What will you receive for a little less than you expected when you buy a Decoy Detonator?", options: null, answer: "less than expected" },
+          { num: 10, text: "As you enter Weasleys' Wizard Wheezes, find the notice for this week's managers specials. What will you receive for a little less than you expected when you buy a Decoy Detonator?", options: ["Nosebiting Teacups","Screaming Yo Yo","Self-Writing Quill","Hex Off"], answer: 1 },
         ]
       },
       {
@@ -710,7 +710,7 @@ const HUNT_DATA = [
 ];
 
 // ── State ──────────────────────────────────────────────────────────────
-const STATE_KEY = 'scavenger_hunt_v3';
+const STATE_KEY = 'scavenger_hunt_v4';
 let state = loadState();
 
 function loadState() {
